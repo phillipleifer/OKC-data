@@ -1,0 +1,150 @@
+---
+title: "OKC data"
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r}
+#reading excel data
+basketball.data <- read.csv("c:/Users/phill/OneDrive/Desktop/shots_data.csv")
+
+#assigning team data
+teamA <- basketball.data[basketball.data$team == "Team A",]
+teamB <- basketball.data[basketball.data$team == "Team B",]
+
+#team A initial variables
+NC.attemptsA <- 0
+C.attemptsA <- 0
+two.attemptsA <- 0
+NC.attemptsA.makes <- 0
+C.attemptsA.makes <- 0
+two.attemptsA.makes <- 0
+
+#Team B initial variables
+NC.attemptsB <- 0
+C.attemptsB <- 0
+two.attemptsB <- 0
+NC.attemptsB.makes <- 0
+C.attemptsB.makes <- 0
+two.attemptsB.makes <- 0
+
+#team A loop
+for (i in 1:nrow(teamA)){
+ #checking noncorner threes
+ if(sqrt((abs(teamA$x[i])**2 + abs(teamA$y[i])**2)) > 23.75 &&      abs(teamA$y[i]) > 7.8){
+   NC.attemptsA = NC.attemptsA + 1
+   if(teamA$fgmade[i] == 1){
+      NC.attemptsA.makes = NC.attemptsA.makes + 1
+    }
+   #checking corner threes
+ } else if (abs(teamA$x[i]) > 22.00 && abs(teamA$y[i]) <= 7.8){
+     C.attemptsA = C.attemptsA + 1
+     if (teamA$fgmade[i] == 1){
+       C.attemptsA.makes = C.attemptsA.makes + 1
+     }
+   #checking two point shots    
+ } else {
+     two.attemptsA = two.attemptsA + 1
+     if (teamA$fgmade[i] == 1){
+       two.attemptsA.makes = two.attemptsA.makes + 1
+     }
+   }
+  
+}
+
+
+#team B loop
+for (i in 1:nrow(teamB)){
+ #checking noncorner threes
+ if(sqrt((abs(teamB$x[i])**2 + abs(teamB$y[i])**2)) > 23.75 &&      abs(teamB$y[i]) > 7.8){
+   NC.attemptsB = NC.attemptsB + 1
+   if(teamB$fgmade[i] == 1){
+      NC.attemptsB.makes = NC.attemptsB.makes + 1
+   }
+   #checking corner threes
+ } else if (abs(teamB$x[i]) > 22.00 && abs(teamB$y[i]) <= 7.8){
+     C.attemptsB = C.attemptsB + 1
+     if (teamB$fgmade[i] == 1){
+       C.attemptsB.makes = C.attemptsB.makes + 1
+     }
+   #checking two point shots     
+ } else {
+     two.attemptsB = two.attemptsB + 1
+     if (teamB$fgmade[i] == 1){
+       two.attemptsB.makes = two.attemptsB.makes + 1
+     }
+   }
+  
+}
+
+
+#Team A percentages
+#EFG
+#NC attempts
+FGANC.teamA = NC.attemptsA
+threePMNC.teamA = NC.attemptsA.makes
+FGMNC.teamA = NC.attemptsA.makes
+EFGNC.teamA = (FGMNC.teamA + (0.5 * threePMNC.teamA))/FGANC.teamA 
+cat('team A effective field goal percentage noncorner three: ', EFGNC.teamA, '\n')
+#C attempts
+FGAC.teamA = C.attemptsA
+threePMC.teamA = C.attemptsA.makes 
+FGMC.teamA = C.attemptsA.makes
+EFGC.teamA = (FGMC.teamA + (0.5 * threePMC.teamA))/FGAC.teamA 
+cat('team A effective field goal percentage corner three: ', EFGC.teamA, '\n')
+#two point attempts
+FGAtwo.teamA = two.attemptsA
+threePMtwo.teamA = 0 
+FGMtwo.teamA = two.attemptsA.makes
+EFGtwo.teamA = (FGMtwo.teamA + (0.5 * threePMtwo.teamA))/FGAtwo.teamA 
+cat('team A effective field goal percentage two pointer: ', EFGtwo.teamA, '\n')
+
+#percentage of shots taken
+teamA.shots = two.attemptsA + NC.attemptsA + C.attemptsA
+#two point
+twopoint.teamA = two.attemptsA / teamA.shots
+cat('team A two point percentage of shots attempted: ', twopoint.teamA, '\n')
+#NC three
+NCthree.teamA = NC.attemptsA / teamA.shots
+cat('team A noncorner three point percentage of shots attempted: ', NCthree.teamA, '\n')
+#Corner three
+Cthree.teamA = C.attemptsA / teamA.shots
+cat('team A corner three point percentage of shots attempted : ', Cthree.teamA, '\n')
+
+
+#Team B percentages
+#EFG
+#NC attempts
+FGANC.teamB = NC.attemptsB
+threePMNC.teamB = NC.attemptsB.makes 
+FGMNC.teamB = NC.attemptsB.makes
+EFGNC.teamB = (FGMNC.teamB + (0.5 * threePMNC.teamB))/FGANC.teamB 
+cat('team B effective field goal percentage noncorner three: ', EFGNC.teamB, '\n')
+#C attempts
+FGAC.teamB = C.attemptsB
+threePMC.teamB = C.attemptsB.makes 
+FGMC.teamB = C.attemptsB.makes
+EFGC.teamB = (FGMC.teamB + (0.5 * threePMC.teamB))/FGAC.teamB 
+cat('team B effective field goal percentage corner three: ', EFGC.teamB, '\n')
+#two point attempts
+FGAtwo.teamB = two.attemptsB
+threePMtwo.teamB = 0
+FGMtwo.teamB = two.attemptsB.makes
+EFGtwo.teamB = (FGMtwo.teamB + (0.5 * threePMtwo.teamB))/FGAtwo.teamB 
+cat('team B effective field goal percentage two pointer: ', EFGtwo.teamB, '\n')
+
+#percentage of shots taken
+teamB.shots = two.attemptsB + NC.attemptsB + C.attemptsB
+#two point
+twopoint.teamB = two.attemptsB / teamB.shots
+cat('team B two point percentage of shots attempted: ', twopoint.teamB, '\n')
+#NC three
+NCthree.teamB = NC.attemptsB / teamB.shots
+cat('team B noncorner three point percentage of shots attempted: ', NCthree.teamB, '\n')
+#Corner three
+Cthree.teamB = C.attemptsB / teamB.shots
+cat('team B corner three point percentage of shots attempted : ', Cthree.teamB, '\n')
+
+
+```
