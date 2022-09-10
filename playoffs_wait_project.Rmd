@@ -366,10 +366,7 @@ Another way to look at this data is to check the length of each stint. In this c
 **QUESTION:** In no more than 3 sentences, please discuss the difference between these two approaches. What types of questions can we answer with each approach?  
 
 **ANSWER 9:**  
-In the first approach you are specifically looking for how long it will take a team to make the playoffs once they miss it.  
-The second approach you are looking for the number of period within a time period that a team misses the playoffs. 
-With the first approach you can see how long it will take for a team to make the playoffs again once they first missed it. 
-With Stints you can answer specific questions of the model of a team that consistently makes or misses the playoffs.
+The first approach you are specifically looking for how long it will take a team to make the playoffs once they miss it, the second approach you are looking for the number of period within a time period that a team misses the playoffs. With the first approach you can see how long it will take for a team to make the playoffs again once they first missed it. With Stints you can answer specific questions to see how a team consistently makes or misses the playoffs.
 
 
 
