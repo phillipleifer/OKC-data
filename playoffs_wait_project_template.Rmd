@@ -51,17 +51,17 @@ Remember that we will be grading the quality of your code and visuals alongside 
 # Answers    
 
 **Question 1:** Please list the team(s) and last playoffs appearance below in the document.  
-**Question 2:** XX.X%        
-**Question 3:** XX.X%  
-**Question 4:** X.X Years  
+**Question 2:** 73.83%         
+**Question 3:** 29.9%  
+**Question 4:** 3.5 Years  
 **Question 5:** Plotting question, put answer below in the document.     
 **Question 6:** Written question, put answer below in the document.    
-**Question 7:** EAST: XX.X%, WEST: XX.X%      
+**Question 7:** EAST: 1.0%, WEST: 3.1% 
 **Question 8:** Written question, put answer below in the document.    
 **Question 9:** Written question, put answer below in the document.   
-**Question 10:** X Stints of length(s) ___.  
-**Question 11:** Mean: X.X, Median: Y.Y    
-**Question 12:** East: X.X, West: Y.Y   
+**Question 10:** 2 Stints of length(s) 1 and 10.  
+**Question 11:** Mean: 2.9, Median: 2.0  
+**Question 12:** East: 2.7, West: 3.3
 **Question 13:** Plotting and written question, please put your answers to (a) and (b) below in the document.  
 **Question 14:** Written question, put answer below in the document.  
 
@@ -82,10 +82,11 @@ If a team falls out of the playoffs, how many seasons are they likely to miss th
 
 
 ```{r}
+#splitting the data by each team
 library(dplyr)
 dat_list = split(results, results$team)
 
-
+#looping through each team to find playoffs droughts that started from 2016 or earlier. 
 for (i in dat_list){
   for (j in 17:1){
     if (i$made_playoffs[j] == TRUE){
@@ -100,7 +101,9 @@ for (i in dat_list){
 
 ```
 
-**ANSWER 1:**   
+**ANSWER 1:** 
+CHA 2015
+SAC 2005
 
 ### Question 2  
 
@@ -109,11 +112,12 @@ for (i in dat_list){
 **ANSWER 2:**    
 
 ```{r}
+#splitting the data by each team
 library(dplyr)
 dat_list = split(results, results$team)
 
+#looping through the data to find each time a team makes the playoffs the following year after they made the playoffs
 playoff_count <- 0
-
 for (i in dat_list){
   for (j in 16:1){
     if (i$made_playoffs[j] == TRUE && i$made_playoffs[j+1] ==TRUE) {
@@ -123,6 +127,7 @@ for (i in dat_list){
 }
 playoff_count
 
+#looping through the data to find each time a team misses the playoffs the following year after they made the playoffs
 miss <- 0
 for (i in dat_list){
   for (j in 16:1){
@@ -133,22 +138,27 @@ for (i in dat_list){
 }
 miss
 
+#Counting the total amount of data that shows if a team continued to make the playoffs or missed the playoffs
 total = miss + playoff_count
+
+#dividing the amount of times a team makes the playoffs again after making the playoffs by the total amount in the count.
 percentage_made_again = playoff_count / total
 percentage_made_again
 
 ```
 
-XX.X%  
+73.83%  
 
 ### Question 3  
 
 **QUESTION:** Starting from the 2005 season (the earliest season in the dataset), what percentage of teams who miss the playoffs make the playoffs in the following season? Please give your answer in the format XX.X%.  
 
 ```{r}
+#splitting the data by each team
 library(dplyr)
 dat_list = split(results, results$team)
 
+#looping through the data to find each time a team makes the playoffs the following year after they missed the playoffs
 miss_play <- 0
 for (i in dat_list){
   for (j in 16:1){
@@ -159,7 +169,7 @@ for (i in dat_list){
 }
 miss_play
 
-
+#looping through the data to find each time a team misses the playoffs the following year after they missed the playoffs
 continue_miss <- 0
 for (i in dat_list){
   for (j in 16:1){
@@ -170,7 +180,10 @@ for (i in dat_list){
 }
 continue_miss
 
+#Counting the total amount of data that shows if a team continued to miss the playoffs or eventually made the playoffs
 percentage = continue_miss +  miss_play
+
+#dividing the amount of times a team makes the playoffs after missing the playoffs by the total amount in the count.
 percentage_made = miss_play / percentage
 percentage_made
 
@@ -178,7 +191,7 @@ percentage_made
 
 **ANSWER 3:**  
 
-XX.X%    
+29.9%    
 
 ## Data Cleaning Interlude  
 
@@ -200,13 +213,12 @@ This will require some significant data cleaning and wrangling that will affect 
 
 
 ```{r}
-
+#splitting the data by each team
 library(dplyr)
 dat_list = split(results, results$team)
 
-
+#looping through each team and each season to find the length of each palyoff drought
 df<- NULL
-
 team_counter = 0
 for (i in dat_list){
   team_counter <- team_counter + 1
@@ -228,12 +240,14 @@ for (i in dat_list){
   df[[team_counter]] <- c(year_missplay_vector)
 }
 
+#putting list into a vector
 unlist(df)
-
 clean_results <- results
+
+#making a new column called missed_seasons and connecting the new vector
 clean_results$missed_seasons = unlist(df)
 
-
+#filtering the data for all seasons before 2015
 clean_results <- clean_results[clean_results$season <= 2015, ]
 
 ```
@@ -243,22 +257,26 @@ clean_results <- clean_results[clean_results$season <= 2015, ]
 **QUESTION:** For a team that misses the playoffs, what is the average number of years they will need to wait to make it back? For example, if the only two teams in our sample were the 2010 Hornets and the 2011 Nets, the average would be 1 more missed playoffs season (CHA missed two more times in '11 and '12, BKN missed 0 more times by making it in '12). Please give your answer to one decimal place.  
 
 ```{r}
-
+#making a counter for length of each playoff droughts and a counter for each time there is a miss playoff. 
 counter <- 0
 miss_play1 <- 0
+
+#looping through the data to find the length of each miss as well as the each time a team missed the playoffs
 for (j in 1:length(clean_results$missed_seasons)){
   if (clean_results$missed_seasons[j+1] >clean_results$missed_seasons[j] & !is.na(clean_results$missed_seasons[j+1])) {
     miss_play1 = clean_results$missed_seasons[j+1] + miss_play1
     counter = counter + 1
   }
 }
+
+#dividing length of playoff drought by the number times a team missed the playoffs
 miss_play1 = miss_play1/counter
 print(miss_play1)
 
 
 ```
 
- **ANSWER 4:** X.X Years    
+**ANSWER 4:** 3.5 Years    
 
 
 ### Question 5  
@@ -294,33 +312,40 @@ ggplot(clean_results2, aes(made_playoffs, efg)) +
 
 **QUESTION:** Write up to four sentences describing any takeaways from the plot you just made.  
 
-**ANSWER 6:**  From the years 2010 to 2015 a team had an average of Effective Field Goal Percentage of above 50% throughout a specific season in order to make the playoffs.  
+**ANSWER 6:**  From the years 2010 to 2015 a team had an average of Effective Field Goal Percentage of above 50% throughout a specific season in order to make the playoffs.   
 
 ### Question 7   
 
 **QUESTION:**  Fit a logistic regression model using your cleaned dataset to predict the probability making the playoffs next season (ie `missed_seasons` = 0) from `net_rtg` and `conference`. That is, given a team's net rating in one season, what are the odds they make the playoffs the following season? Once you've fit the model, give the predicted probability to one decimal place that a team with a net rating of -2 from the East and the West will make the playoffs next season.  
 
 ```{r}
+#merging the two datasets
 merged_results <- merge(clean_results,team_conferences,by="team")
 
+#filtering by conference
 West <- filter(merged_results,conference =='West')
 East <- filter(merged_results,conference =='East')
 
+#making the decimal place be one.
 options(digits = 2)
-linearModel_west = lm(missed_seasons~net_rtg, data=West)
-summary(linearModel_west)
-predict(linearModel_west, data.frame(net_rtg = -2))
 
+#making the linear model for East
 linearModel_east = lm(missed_seasons~net_rtg, data=East)
 summary(linearModel_east)
-predict(linearModel_east, data.frame(net_rtg = -2))
+cat(predict(linearModel_east, data.frame(net_rtg = -2)), 'this is for East')
+
+#making the linear model for West
+linearModel_west = lm(missed_seasons~net_rtg, data=West)
+summary(linearModel_west)
+cat(predict(linearModel_west, data.frame(net_rtg = -2)),'this is for West')
+
 
 ```
 
 **ANSWER 7:**  
 
-EAST: XX.X%  
-WEST: YY.Y% 
+EAST: 1%  
+WEST: 3.1% 
 
 
 ### Question 8  
@@ -329,6 +354,8 @@ WEST: YY.Y%
 **QUESTION:** In no more than 4 sentences, please explain what the difference in predictions (East vs West) from question 8 means. Assume you're talking to a nontechnical member of the organization and are framing it as how this disparity might impact a Western conference team's strategic planning.  
 
 **ANSWER 8:**  
+For every point increased in net ranking for the Western conference the chances of missing the playoffs again goes down -0.3346, but for every point increase in net ranking for he Eastern conference the chances of missing the playoffs again goes down -0.1103. This shows that each win is much more important to make the playoffs in the Western conference than in the Eastern conference. Each Western conference team can look at their offense and defense to find the difference in scores spread over 100 possessions to see if they are good enough to make the playoffs. 
+
 
 ### Question 9   
 
@@ -353,8 +380,11 @@ Define a "stint" outside the playoffs as a continuous group of seasons in which 
 **QUESTION:** How many stints outside the playoffs have the Phoenix Suns had between 2005 and 2021? What were the lengths of these stints?  
 
 ```{r}
+#filtering data for Phoenix 
 PHX <- results[results$team == 'PHX',]
 PHX
+
+#finding the number of stints
 stint = 0
 for (i in 1:length(PHX)){
   if (PHX$made_playoffs[i] == FALSE && PHX$made_playoffs[i+1] ==TRUE & !is.na(PHX$made_playoffs[i+1])){
@@ -363,6 +393,7 @@ for (i in 1:length(PHX)){
 }
 stint
 
+#finding the length of each playoff droughts
 year_missplay_vector = c()
 for (j in 1:length(PHX)){
     year_missplay <- 0
@@ -377,7 +408,7 @@ for (j in 1:length(PHX)){
     year_missplay_vector[j] <- year_missplay
   }
 
-
+#finding th length of each stint
 for (j in 1:(length(year_missplay_vector)-1)){
   if (year_missplay_vector[j+1] > year_missplay_vector[j] ) {
     print(year_missplay_vector[j+1])
@@ -389,7 +420,7 @@ for (j in 1:(length(year_missplay_vector)-1)){
 
 **ANSWER 10:**  
 
-X Stints, of length(s) ___.  
+2 Stints, of length(s) 1 and 10.  
 
 
 ## Data Cleaning Interlude 2  
@@ -401,13 +432,13 @@ In the event that a team didn't make the playoffs in 2005, **do not count** that
 As before, please only consider stints that started in 2015 or earlier to avoid needing to deal with several short ongoing streaks of missing the playoffs. Also as before, be charitable and assume that any ongoing stints that started 2015 or earlier will end next season. For example, if a team were to make the playoffs in 2014, then miss from 2015 to 2021, they would have missed 7 consecutive playoffs so far. We will assume that they make the playoffs next season, and thus their final stint outside the playoffs is 7 seasons long.   
 
 ```{r}
+#splitting the data into teams
 library(dplyr)
 dat_list = split(results, results$team)
 
-
+#looping through each team and each season to find the amount of stints as well as the lenght of each stint
 df1<- NULL
 df2<-NULL
-
 team_counter1 = 1
 team_counter = 0
 for (i in dat_list){
@@ -433,6 +464,7 @@ for (i in dat_list){
   df2[[team_counter1]] = team_vector
 }
 
+#creating a new dataframe to include each team as well as the lenght of each stint
 stint_list_length <- data.frame ( team = c(unlist(df2)),
                                   stint_length  = c(unlist(df1)))
 
@@ -445,12 +477,15 @@ stint_list_length <- data.frame ( team = c(unlist(df2)),
 
 **ANSWER 11:** 
 ```{r}
+#finding the mean of each stint length
 mean(stint_list_length$stint_length)
+
+#finding the median of each stint length
 median(stint_list_length$stint_length)
 ```
 
-Mean: X.X  
-Median: Y.Y     
+Mean: 2.9
+Median: 2    
 
 ### Question 12  
 
@@ -459,16 +494,20 @@ Median: Y.Y
 **ANSWER 12:** 
 
 ```{r}
+#merging stint_list_length win the team conferences data.
 merged_stint <- merge(stint_list_length,team_conferences,by="team")
 
+#separating conferences
 West_stint <- filter(merged_stint,conference =='West')
 East_stint <- filter(merged_stint,conference =='East')
+
+#finding the mean for each conference.
 mean(East_stint$stint_length)
 mean(West_stint$stint_length)
 ```
 
-East: X.X    
-West: X.X    
+East: 2.7    
+West: 3.3  
 
 ### Question 13  
 
@@ -482,11 +521,7 @@ For each of 10,000 iterations, randomly **reorder** the conference labels on eac
 
 **ANSWER 13 (a):**  
 ```{r}
-
-Wes <- merged_stint[merged_stint$conference == 'West',]
-mean(Wes$stint_length)
-Eas <- merged_stint[merged_stint$conference == 'East',]
-mean(Eas$stint_length)
+#finding the current differences in each conference.
 observed <- mean(stint_length ~ conference, data=merged_stint) %>%
   diff()
 observed
@@ -495,19 +530,28 @@ observed
 ```{r}
 library(mosaic)
 library(ggplot2)
+library(ggthemes)
 
+#finding the current differences in each conference.
 observed <- mean(stint_length ~ conference, data=merged_stint) %>%
   diff()
 
 observed
 
+#doing the permutation test
 rand_dist <- do(10000) * mean(stint_length ~ shuffle(conference), data=merged_stint) %>%
   diff()
 
+#plotting the permutation test
 ggplot(data = rand_dist) +
   geom_histogram(mapping = aes(x = West)) +
   xlab('mean difference')+
-  geom_vline(xintercept = observed, linetype = 2, colour = 'blue' )
+  geom_vline(xintercept = observed, linetype = 2, colour = 'blue' )+
+  labs(title = 'Permutation Test',
+      x = 'Mean Difference',
+      y = 'Count') +
+  theme_fivethirtyeight(base_size = 10, base_family = "sans")  +
+  theme(axis.title = element_text())
 
 prop( ~ West >= observed, data = rand_dist)
 
@@ -517,11 +561,12 @@ prop( ~ West >= observed, data = rand_dist)
 **PART (b):** What do you conclude from your permutation test and plot? Please answer in no more than 3 sentences.  
 
 ```{r}
+#Finding the significance of this test.
+options(digits = 5)
 prop( ~ West >= observed, data = rand_dist)
 ```
 
-**ANSWER 13 (b):**  The proportion of the permutation plot has 0.1876 mean difference above the observed (original) data.  Because this is greater than 0.05 you would reject that conferences has anything to do with the length of the stints a team misses the playoffs. 
-
+**ANSWER 13 (b):**  The proportion of the permutation plot has 0.1924 (which changes every time I run it) mean difference above the observed (original) data.  Because this is greater than 0.05, and every time that you run it is greater than 0.05, you would reject that conferences has anything to do with the length of the stints a team misses the playoffs. 
 
 # Modeling  
 
@@ -534,35 +579,36 @@ In this question you will fit a model using team statistics to predict how succe
 *Note:* The team statistic variables come from basketball reference. The included data dictionary will give a brief explanation of what each stat represents.  
 
 **Part (a):** Fit a model to predict the variable `next_season_win_pct`.  
-
 ```{r}
-library(Hmisc)
+library(olsrr)
 
-drops <- c("next_season_win_pct","team",'made_playoffs')
-df <- results[ , !(names(results) %in% drops)]
-results
-cor(df)
+#stepwise regression
+
+#creating the new stepwise regression model
+new_model <- lm(data = results, next_season_win_pct ~ net_rtg+wins+age+strength_of_schedule+three_pt_pct+two_pt_pct+true_shooting_pct+efg+tov_rate+oreb+dreb+free_throw_rate+def_three_pt_pct+def_two_pt_pct+def_efg+def_tov_rate+def_free_throw_rate)
+
+#forward fitting the model
+FWDfit<-ols_step_forward_aic(new_model,penter=0.05,details=F)
+
+#backward fitting the model
+BWfit<-ols_step_backward_aic(new_model,penter=0.05,details=F)
+
+#looking at the coefficients of each model
+print(FWDfit[['model']][['coefficients']])
+print(BWfit[['model']][['coefficients']])
+
+#predicting OKC win percentage in 2022 based on their teams data from 2021 
+OKC_win_PCT <-  0.376413227 + (0.017186339 * -7.9) + (-0.015430446 * 22.4) + (0.003249008 * 24) + (0.998943910 * 0.125) + (0.757294472 * 0.353)
+OKC_win_PCT
 
 ```
-```{r}
-drops <- c('efg','def_efg','wins','made_playoffs','games')
-df1 <- results[ , !(names(results) %in% drops)]
-df1
 
-library(dplyr)
-team_list = split(df1, df1$team)
 
-for (i in team_list){
-next_season_win_percent <- lm(next_season_win_pct ~ net_rtg+age+strength_of_schedule+three_pt_pct+two_pt_pct+true_shooting_pct+tov_rate+oreb+dreb+free_throw_rate+def_three_pt_pct+def_two_pt_pct+def_tov_rate+def_free_throw_rate, data = team_list[i])
-coef(next_season_win_percent)
-}
-```
 **Part (b):**  
 
-Explain your model to a member of the front office. What are your takeaways? Please answer in no more than 4 sentenes.  
-Wins very correlated with net_rtg
-EFG very correlated with multiple attributes 
-def_efg very correlated with def_two_pt_pct
+Explain your model to a member of the front office. What are your takeaways? Please answer in no more than 4 sentenes.
+
+I did a stepwise function to find what variables are statistically significant in finding out next seasons win percentage.  This model (which I did both forward and backward) found 4 variables that were statistically significant in finding next seasons win percentage, those variables are net_rtg, age, wins, tov_rate, and def_three_pt_pct. I then plugged in data from OKC in 2021 to predict their 2022 wins which came out to be 29.9438. So if OKC made no changes to their 2021 roster their 2022 win would be around 30 games.
 
 
 
